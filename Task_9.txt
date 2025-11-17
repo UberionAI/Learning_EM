@@ -1,0 +1,24 @@
+на WSL:
+root@WIN-EBPAHPCV4PE:~# service ssh
+Usage: /etc/init.d/ssh {start|stop|reload|force-reload|restart|try-restart|status}.
+root@WIN-EBPAHPCV4PE:~# service ssh start
+Starting OpenBSD Secure Shell server: sshd.
+root@WIN-EBPAHPCV4PE:~# service ssh status
+sshd is running.
+
+в PowerShell Windows10:
+PS C:\Users\uberion> ssh ubi@172.17.147.125
+ubi@172.17.147.125's password:
+Linux WIN-EBPAHPCV4PE 5.15.167.4-microsoft-standard-WSL2 #1 SMP Tue Nov 5 00:21:55 UTC 2024 x86_64
+
+The programs included with the Debian GNU/Linux system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Debian GNU/Linux comes with ABSOLUTELY NO WARRANTY, to the extent
+permitted by applicable law.
+ubi@WIN-EBPAHPCV4PE:~$ sudo -i
+[sudo] password for ubi:
+root@WIN-EBPAHPCV4PE:~#
+
+Вывод - ССШ-сервер работает, клиент смог подключиться.
