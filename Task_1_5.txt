@@ -1,5 +1,6 @@
-# Для реализации заданий используется WSL-система на Debian12, а также Windows10
+## Для реализации заданий используется WSL-система на Debian12, а также Windows10
 
+# Задание 1. Определение IP-адреса компьютера
 root@test:~# ifconfig
 eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
         inet xxx.yyy.zzz.fff  netmask 255.255.240.0  broadcast xxx.yyy.zzz.fff
@@ -18,3 +19,63 @@ lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
         RX errors 0  dropped 0  overruns 0  frame 0
         TX packets 124318  bytes 11050572 (10.5 MiB)
         TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+
+# Задание 2. Пинг хоста в локальной сети
+
+root@test:~# ping 10.xx.yy.zz
+PING 10.xx.yy.zz (10.xx.yy.zz) 56(84) bytes of data.
+64 bytes from 10.xx.yy.zz: icmp_seq=1 ttl=62 time=2.23 ms
+64 bytes from 10.xx.yy.zz: icmp_seq=2 ttl=62 time=1.73 ms
+^C
+--- 10.xx.yy.zz ping statistics ---
+2 packets transmitted, 2 received, 0% packet loss, time 1001ms
+rtt min/avg/max/mdev = 1.725/1.979/2.233/0.254 ms
+
+
+# Задание 3. Сканирование открытых портов
+
+root@test:~# sudo apt install nmap
+root@test:~# nmap buildin.ai
+Starting Nmap 7.80 ( https://nmap.org ) at 2025-11-17 15:48 +05
+Nmap scan report for buildin.ai (138.113.92.191)
+Host is up (0.070s latency).
+Not shown: 901 filtered ports, 71 closed ports
+PORT      STATE SERVICE
+53/tcp    open  domain
+80/tcp    open  http
+85/tcp    open  mit-ml-dev
+88/tcp    open  kerberos-sec
+443/tcp   open  https
+1723/tcp  open  pptp
+2020/tcp  open  xinupageserver
+3001/tcp  open  nessus
+5000/tcp  open  upnp
+5001/tcp  open  commplex-link
+5002/tcp  open  rfe
+5003/tcp  open  filemaker
+5004/tcp  open  avt-profile-1
+5009/tcp  open  airport-admin
+5030/tcp  open  surfpass
+5050/tcp  open  mmcc
+5080/tcp  open  onscreen
+5100/tcp  open  admd
+6000/tcp  open  X11
+6003/tcp  open  X11:3
+8000/tcp  open  http-alt
+8080/tcp  open  http-proxy
+8400/tcp  open  cvd
+8888/tcp  open  sun-answerbook
+9009/tcp  open  pichat
+9011/tcp  open  d-star
+9080/tcp  open  glrpc
+14000/tcp open  scotty-ft
+
+Nmap done: 1 IP address (1 host up) scanned in 17.59 seconds
+
+
+# Задание 4. Определение MAC-адреса
+
+root@test:~# arp -a
+test.test.ru (xx.yy.zz.ff) at xx:yy:zz:ff:aa:bb [ether] on eth0
+root@test:~#
