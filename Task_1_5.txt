@@ -1,0 +1,20 @@
+# Для реализации заданий используется WSL-система на Debian12, а также Windows10
+
+root@test:~# ifconfig
+eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet xxx.yyy.zzz.fff  netmask 255.255.240.0  broadcast xxx.yyy.zzz.fff
+        inet6 xx::yy:zzz:ff:tt  prefixlen 64  scopeid 0x20<link>
+        ether xx::yy:zzz:ff:tt  txqueuelen 1000  (Ethernet)
+        RX packets 1835332  bytes 152000604 (144.9 MiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 4512  bytes 304044 (296.9 KiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
+        inet 127.0.0.1  netmask 255.0.0.0
+        inet6 ::1  prefixlen 128  scopeid 0x10<host>
+        loop  txqueuelen 1000  (Local Loopback)
+        RX packets 124318  bytes 11050572 (10.5 MiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 124318  bytes 11050572 (10.5 MiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
