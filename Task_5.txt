@@ -1,4 +1,4 @@
-# Задание 5. Установка HTTP-сервера
+# Задание 5
 
 sudo apt install nginx -y
 sudo systemctl start nginx
