@@ -1,6 +1,6 @@
 ## Для реализации заданий используется WSL-система на Debian12, а также Windows10
 
-# Задание 1. Определение IP-адреса компьютера
+# Задание 1.
 root@test:~# ifconfig
 eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
         inet xxx.yyy.zzz.fff  netmask 255.255.240.0  broadcast xxx.yyy.zzz.fff
@@ -21,7 +21,7 @@ lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
         TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
 
 
-# Задание 2. Пинг хоста в локальной сети
+# Задание 2.
 
 root@test:~# ping 10.xx.yy.zz
 PING 10.xx.yy.zz (10.xx.yy.zz) 56(84) bytes of data.
@@ -33,7 +33,7 @@ PING 10.xx.yy.zz (10.xx.yy.zz) 56(84) bytes of data.
 rtt min/avg/max/mdev = 1.725/1.979/2.233/0.254 ms
 
 
-# Задание 3. Сканирование открытых портов
+# Задание 3.
 
 root@test:~# sudo apt install nmap
 root@test:~# nmap buildin.ai
@@ -74,7 +74,7 @@ PORT      STATE SERVICE
 Nmap done: 1 IP address (1 host up) scanned in 17.59 seconds
 
 
-# Задание 4. Определение MAC-адреса
+# Задание 4.
 
 root@test:~# arp -a
 test.test.ru (xx.yy.zz.ff) at xx:yy:zz:ff:aa:bb [ether] on eth0
