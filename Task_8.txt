@@ -1,0 +1,263 @@
+OpenVPN сервер развернули на WSL Debian12, клиент - OpenVPN client для Windows10:
+root@WIN-EBPAHPCV4PE:~# sudo apt install openvpn easy-rsa
+генерируем все необходимые сертификаты и ключи
+запускаем OpenVPN server в test mode (отключив tls-auth для упрощения запуска:
+cd ~/easy-rsa
+sudo openvpn \
+    --server 10.8.0.0 255.255.255.0 \
+    --proto udp \
+    --port 1194 \
+    --dev tun \
+    --ca pki/ca.crt \
+    --cert pki/issued/server.crt \
+    --key pki/private/server.key \
+    --dh pki/dh.pem \
+    --cipher AES-256-CBC \
+    --auth SHA256 \
+    --verb 3
+
+На клиентской машине создаём конфиг test.ovpn, вставляем туда сгенерированные ключи и сертификаты:
+client
+dev tun
+proto udp
+remote 172.17.147.125 1194
+resolv-retry infinite
+nobind
+persist-key
+persist-tun
+remote-cert-tls server
+cipher AES-256-CBC
+auth SHA256
+verb 3
+
+<ca>
+-----BEGIN CERTIFICATE-----
+MIIDMzCCAhugAwIBAgIUMx15UQd7KWv9tIZDJENYsNVp90UwDQYJKoZIhvcNAQEL
+BQAwDjEMMAoGA1UEAwwDdWJpMB4XDTI1MTExNzE0NTU1N1oXDTM1MTExNTE0NTU1
+N1owDjEMMAoGA1UEAwwDdWJpMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC
+AQEA2O7xVWGZpE7+cVGKUf7o79yGkQSOzuRjhul2CT6n4ewm6AUSvDABIsCYlMG0
+zqr/Eo6CaYaw6KbS5JCmQt5lXW/zEnzH2KOQONPglpST2V5sqOmJSML8OKAnM2yP
+vGaNqA8CNbVFJG4mixHvAtMBnWT7/yGUq/14jIei9H/44QSWQG0qk4at4secPSNy
+5HRRpNhO3/OdGmcmNmCGSyppb/wGD6ggei5PHO9Wyh66LVJ7cR819pLFPGXDpGgw
+2SZz1xfuNqBY39eUuuCP2+d7C8cis3I2iTb3abNbDz9QjQdSaM8SeTcsAxsTOIXZ
+IXsx3YIZZ7wjaOc4IuuCtbU6HwIDAQABo4GIMIGFMB0GA1UdDgQWBBQBqPkm+XKT
+XPBkYjP30JVgRWWVuDBJBgNVHSMEQjBAgBQBqPkm+XKTXPBkYjP30JVgRWWVuKES
+pBAwDjEMMAoGA1UEAwwDdWJpghQzHXlRB3spa/20hkMkQ1iw1Wn3RTAMBgNVHRME
+BTADAQH/MAsGA1UdDwQEAwIBBjANBgkqhkiG9w0BAQsFAAOCAQEAg1gzTCCu32Hy
+QM6iXb8oiSTdlUkTvT6QgBP9LM78fOTva6i9/ucxZKohzhHkt6wfKM7Ms8paiRjL
+N7N5H+VgO2Ob0HQul6K2/jIkAu2i81LXIPD1QKB3QkzPBq3RrgDhqduV/vmu3+a4
+Y7/UpFcGGnxwyvAi3aao7WN1n1Zfaq+SF+SRq9dJpIBoybnyVEMc1Nv7IGCFd7JM
+nTiW3IaO+SCgM/2UAAaYY810S01sbrNPyzVFedKaMzLlj+JAVxs//Dyw6DKXtHHB
+J3/AS0oe7+ZMa8gxJaS6B3v1vCRwvcI+/9FTpFJFF+bSHq5A+QC7ZvjUqNQBCocd
+21ej1acFGA==
+-----END CERTIFICATE-----
+</ca>
+
+<cert>
+-----BEGIN CERTIFICATE-----
+MIIDRTCCAi2gAwIBAgIQM/hAj0LGsoeyOw1NCbOMezANBgkqhkiG9w0BAQsFADAO
+MQwwCgYDVQQDDAN1YmkwHhcNMjUxMTE3MTQ1ODA3WhcNMjgwMjIwMTQ1ODA3WjAS
+MRAwDgYDVQQDDAdjbGllbnQxMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC
+AQEAuTbLCvTLs4GHgJL5yMG2zwICuGmygou4vNaFm0shgKQOFsDbPFosNPKnpZoE
+au63BEUmaw04KhHlQrdWfplvI6USacK0nSL/ToJ6RiTrUbmmFQYgZHq7sr+WDbEM
++pkDec5s0/edVFeJCAlVyO1jX/b3u/eNYPouFJfBGNHHg5zlDzNb5zNv5lOAr11q
+btLU/nQEoyT9cnZROBUz22EDDuY3BuhYTdtDMOpT7J7T70g3kLrDHUHOOMZadUt3
+lWCoBFFLgr/ZlB7uQvjIX1PzlnFkdxWJrq0CJPjTXjmMqauE++2O9ggvLYA7WUTs
+rsFDgk9o5kbQNeOXevLP+VCc7QIDAQABo4GaMIGXMAkGA1UdEwQCMAAwHQYDVR0O
+BBYEFJgSqBca+kLr3B0sd/wAIHX2RyaCMEkGA1UdIwRCMECAFAGo+Sb5cpNc8GRi
+M/fQlWBFZZW4oRKkEDAOMQwwCgYDVQQDDAN1YmmCFDMdeVEHeylr/bSGQyRDWLDV
+afdFMBMGA1UdJQQMMAoGCCsGAQUFBwMCMAsGA1UdDwQEAwIHgDANBgkqhkiG9w0B
+AQsFAAOCAQEALoBPiy8ubezDsSiC2zxK92J16pvY93RZHuO/q1J01j6sCaEhP85u
+61w0Bd3BxNhYtVX+5VJiZcEqw8TgDvx3EGIWPi6vTpdQ3uVsQk8ZX9Zb7yEkhmJR
+P09leayS0NsujZoKBknSixsm4ti4UmIZQmmDJeWidCtv/uesGN+MklomfGVLz4Lo
+v07YYl2Z2XhoEgOe0NbBQ6ljvYZYZIREJ1d2bG4C1pnI8+kU6m3Wbnc80gi1V7Ma
+QE7g0r0LWVCb09mNpB94AI5FTs1yIQF5ZDrVz6nemKVt6r3f5Gozc9i6kcLP2Hbo
+TwXq7HNkHnKf5crxDBkx/mG91HJEphgEsQ==
+-----END CERTIFICATE-----
+</cert>
+
+<key>
+-----BEGIN PRIVATE KEY-----
+MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC5NssK9MuzgYeA
+kvnIwbbPAgK4abKCi7i81oWbSyGApA4WwNs8Wiw08qelmgRq7rcERSZrDTgqEeVC
+t1Z+mW8jpRJpwrSdIv9OgnpGJOtRuaYVBiBkeruyv5YNsQz6mQN5zmzT951UV4kI
+CVXI7WNf9ve7941g+i4Ul8EY0ceDnOUPM1vnM2/mU4CvXWpu0tT+dASjJP1ydlE4
+FTPbYQMO5jcG6FhN20Mw6lPsntPvSDeQusMdQc44xlp1S3eVYKgEUUuCv9mUHu5C
++MhfU/OWcWR3FYmurQIk+NNeOYypq4T77Y72CC8tgDtZROyuwUOCT2jmRtA145d6
+8s/5UJztAgMBAAECggEBAJc8YKt/nF3lZMneOcxuMWHzWFlRJYxnnt/Do7Fcteyf
+CUoXDG3Ji9NoWPBmRTkz14nLFUXQs43Wswe5QQ17KD9I6TIm5OhyzVpEPKfOOcCw
+ASelqwmhFmcs/dAMRHbUPvxVTJQA2x0lpSVEyiGZhc20kjGQQIdxgfMav3gOxAV4
+0bYiK95GYcrALJg3uexNndV6X4D7bpfJ9PmuHa0H2bQlH+Gj+Asv0dOjNOPlFuXT
+wHbWOHGUXkXJ4BOfTTOVxuAJpgb9KSr7ECZsuE68A9jKujM/ImxOeha5o0tInAxA
+zY84ZCDL8Di+d0Knz9G0inmPqcu7VbsAFk6bhwLfYEECgYEA43z2yj4oDMsszYa+
+Au8uxej81mc9CyAxYE6KD7zF7v0gc8NR4qL1NDrXIrbIfgqjkJSOeYPRTu+Xgi8p
+6L2i8RG+Snr/4CaoHtx70pdUUTF4+PthBp7EecV6mYVgYB9lAQxEt8KHWtiwczeB
+QR5iPBxSK1f1W0AYXwjRL7dwYiUCgYEA0G1zJHuAZf/nIFeWo8PDqPa23gqjVuPY
+3KZdP5oMkM1XVWBn8YsO8gp/MEvN9chFrGXB9O1aVuGVnGcCH9+jpAiHg1Z51WU3
+OmWrtC3L0rT2VsT+/NdSQK/XzqW6qogXCEZj1S0+52L8zovfk5l1bP8DOShhMrjb
+1Ui0WMkXwSkCgYATZnPReY2G0cjnWidYLrepbx4o1rMRANTVJr2FbA7hO7sJxE12
+a3lH1ADG2BmvDg825ERmPoSaG7qrAoSrcYi00FOPHIA3yHQr9ZeltPwe1H5BlYaH
+vwB4dgvnjcVTTToa5cXyeed7KuGZYdFnEUVFZRDo2150QroRWLomPJmb9QKBgGGj
+dDYZ+OtPdwmKnpH3Cjij4sSfvSbeM+AhuzspQkuvNgNT1z2rBARU8IJCcKh7+k+p
+l7PSYOikYr7S7obZ8EHOkRTwtMBH2xhrOoV8kqgRh/jb7guqHukYtwMiVhC/EfMZ
+bnkV6grhL0be9YyibgTybaMgDHCDctA2b+3LvmoJAoGACgPvuW0du+N+vtCv37R1
+TRyfqzexCY5Qi03TgJsFZtJaXDZo6DJATmdTf7PHStVlSBPB8ilO5A6jpkWQ/eUc
+f6qdk6qIdJR+ynELDygHCNVhrBgRLSFN2sS8DPW0wICwSM+fxm43TWG60+q9ga9X
+GxHRQRfwWhL9i3YTh8XG0dY=
+-----END PRIVATE KEY-----
+</key>
+
+<tls-auth>
+-----BEGIN OpenVPN Static key V1-----
+9b3721d5e0a96234b37ed0b185e58d61
+5b4ab6dbc5bf998c9c88a625966ff750
+53622dd4052ea0c4ba88aa3392e8972b
+a356766ab6b86edce704c2e738e5f21b
+7620d6bb31cb917c5dc2b65ee9dfbbe1
+9fcd490f39b640d73faa42cd112b1396
+4bffb3e20c64488efba52116abbeceea
+53db2cd5d1fb169d97641059f908e128
+c6b704e60e25a5a2b98e4de0c4f48ce2
+22bca6f7e843b460d92af4a2172c6c12
+fba4a8007c5f20cfaf2133e79e4d6630
+99241b03939b6b9e56e19212544a6d30
+602c21f9cf599c5309b069b237ea4db7
+2af9fada4c2473ffa5eaa87fdf2d9a60
+769ec8eec633f094725f8092008165ce
+1e5491c740a15911e638729d87684edd
+-----END OpenVPN Static key V1-----
+</tls-auth>
+
+
+
+Запускаем OpenVPN server:
+root@WIN-EBPAHPCV4PE:~/easy-rsa# sudo openvpn \
+>     --server 10.8.0.0 255.255.255.0 \
+>     --proto udp \
+>     --port 1194 \
+>     --dev tun \
+>     --ca pki/ca.crt \
+>     --cert pki/issued/server.crt \
+>     --key pki/private/server.key \
+>     --dh pki/dh.pem \
+>     --cipher AES-256-CBC \
+>     --auth SHA256 \
+>     --verb 3
+2025-11-17 20:29:56 WARNING: --topology net30 support for server configs with IPv4 pools will be removed in a future release. Please migrate to --topology subnet as soon as possible.
+2025-11-17 20:29:56 DEPRECATED OPTION: --cipher set to 'AES-256-CBC' but missing in --data-ciphers (AES-256-GCM:AES-128-GCM). Future OpenVPN version will ignore --cipher for cipher negotiations. Add 'AES-256-CBC' to --data-ciphers or change --cipher 'AES-256-CBC' to --data-ciphers-fallback 'AES-256-CBC' to silence this warning.
+2025-11-17 20:29:56 OpenVPN 2.5.1 x86_64-pc-linux-gnu [SSL (OpenSSL)] [LZO] [LZ4] [EPOLL] [PKCS11] [MH/PKTINFO] [AEAD] built on Aug 25 2025
+2025-11-17 20:29:56 library versions: OpenSSL 1.1.1n  15 Mar 2022, LZO 2.10
+2025-11-17 20:29:56 WARNING: --keepalive option is missing from server config
+2025-11-17 20:29:56 net_route_v4_best_gw query: dst 0.0.0.0
+2025-11-17 20:29:56 net_route_v4_best_gw result: via 172.17.144.1 dev eth0
+2025-11-17 20:29:56 Diffie-Hellman initialized with 2048 bit key
+2025-11-17 20:29:56 net_route_v4_best_gw query: dst 0.0.0.0
+2025-11-17 20:29:56 net_route_v4_best_gw result: via 172.17.144.1 dev eth0
+2025-11-17 20:29:56 ROUTE_GATEWAY 172.17.144.1/255.255.240.0 IFACE=eth0 HWADDR=00:15:5d:b6:8f:eb
+2025-11-17 20:29:56 TUN/TAP device tun0 opened
+2025-11-17 20:29:56 net_iface_mtu_set: mtu 1500 for tun0
+2025-11-17 20:29:56 net_iface_up: set tun0 up
+2025-11-17 20:29:56 net_addr_ptp_v4_add: 10.8.0.1 peer 10.8.0.2 dev tun0
+2025-11-17 20:29:56 net_route_v4_add: 10.8.0.0/24 via 10.8.0.2 dev [NULL] table 0 metric -1
+2025-11-17 20:29:56 Could not determine IPv4/IPv6 protocol. Using AF_INET
+2025-11-17 20:29:56 Socket Buffers: R=[212992->212992] S=[212992->212992]
+2025-11-17 20:29:56 UDPv4 link local (bound): [AF_INET][undef]:1194
+2025-11-17 20:29:56 UDPv4 link remote: [AF_UNSPEC]
+2025-11-17 20:29:56 MULTI: multi_init called, r=256 v=256
+2025-11-17 20:29:56 IFCONFIG POOL IPv4: base=10.8.0.4 size=62
+2025-11-17 20:29:56 Initialization Sequence Completed
+2025-11-17 20:30:23 172.17.144.1:62531 TLS: Initial packet from [AF_INET]172.17.144.1:62531, sid=d889c809 83999a9a
+2025-11-17 20:30:23 172.17.144.1:62531 VERIFY OK: depth=1, CN=ubi
+2025-11-17 20:30:23 172.17.144.1:62531 VERIFY OK: depth=0, CN=client1
+2025-11-17 20:30:23 172.17.144.1:62531 peer info: IV_VER=2.4.11
+2025-11-17 20:30:23 172.17.144.1:62531 peer info: IV_PLAT=win
+2025-11-17 20:30:23 172.17.144.1:62531 peer info: IV_PROTO=2
+2025-11-17 20:30:23 172.17.144.1:62531 peer info: IV_NCP=2
+2025-11-17 20:30:23 172.17.144.1:62531 peer info: IV_CIPHERS=AES-256-GCM:AES-128-GCM:AES-256-CBC
+2025-11-17 20:30:23 172.17.144.1:62531 peer info: IV_LZ4=1
+2025-11-17 20:30:23 172.17.144.1:62531 peer info: IV_LZ4v2=1
+2025-11-17 20:30:23 172.17.144.1:62531 peer info: IV_LZO=1
+2025-11-17 20:30:23 172.17.144.1:62531 peer info: IV_COMP_STUB=1
+2025-11-17 20:30:23 172.17.144.1:62531 peer info: IV_COMP_STUBv2=1
+2025-11-17 20:30:23 172.17.144.1:62531 peer info: IV_TCPNL=1
+2025-11-17 20:30:23 172.17.144.1:62531 peer info: IV_GUI_VER=OpenVPN_GUI_11
+2025-11-17 20:30:23 172.17.144.1:62531 Control Channel: TLSv1.3, cipher TLSv1.3 TLS_AES_256_GCM_SHA384, 2048 bit RSA
+2025-11-17 20:30:23 172.17.144.1:62531 [client1] Peer Connection Initiated with [AF_INET]172.17.144.1:62531
+2025-11-17 20:30:23 client1/172.17.144.1:62531 MULTI_sva: pool returned IPv4=10.8.0.6, IPv6=(Not enabled)
+2025-11-17 20:30:23 client1/172.17.144.1:62531 MULTI: Learn: 10.8.0.6 -> client1/172.17.144.1:62531
+2025-11-17 20:30:23 client1/172.17.144.1:62531 MULTI: primary virtual IP for client1/172.17.144.1:62531: 10.8.0.6
+2025-11-17 20:30:23 client1/172.17.144.1:62531 Data Channel: using negotiated cipher 'AES-256-GCM'
+2025-11-17 20:30:23 client1/172.17.144.1:62531 Outgoing Data Channel: Cipher 'AES-256-GCM' initialized with 256 bit key
+2025-11-17 20:30:23 client1/172.17.144.1:62531 Incoming Data Channel: Cipher 'AES-256-GCM' initialized with 256 bit key
+2025-11-17 20:30:24 client1/172.17.144.1:62531 PUSH: Received control message: 'PUSH_REQUEST'
+2025-11-17 20:30:24 client1/172.17.144.1:62531 SENT CONTROL [client1]: 'PUSH_REPLY,route 10.8.0.1,topology net30,ifconfig 10.8.0.6 10.8.0.5,peer-id 0,cipher AES-256-GCM' (status=1)
+^C2025-11-17 20:31:02 event_wait : Interrupted system call (code=4)
+2025-11-17 20:31:02 net_route_v4_del: 10.8.0.0/24 via 10.8.0.2 dev [NULL] table 0 metric -1
+2025-11-17 20:31:02 Closing TUN/TAP interface
+2025-11-17 20:31:02 net_addr_ptp_v4_del: 10.8.0.1 dev tun0
+2025-11-17 20:31:02 SIGINT[hard,] received, process exiting
+root@WIN-EBPAHPCV4PE:~/easy-rsa#
+
+Логи клиента:
+Mon Nov 17 20:30:23 2025 OpenVPN 2.4.11 x86_64-w64-mingw32 [SSL (OpenSSL)] [LZO] [LZ4] [PKCS11] [AEAD] built on Jun 17 2021
+Mon Nov 17 20:30:23 2025 Windows version 6.2 (Windows 8 or greater) 64bit
+Mon Nov 17 20:30:23 2025 library versions: OpenSSL 1.1.1k  25 Mar 2021, LZO 2.10
+Enter Management Password:
+Mon Nov 17 20:30:23 2025 MANAGEMENT: TCP Socket listening on [AF_INET]127.0.0.1:25341
+Mon Nov 17 20:30:23 2025 Need hold release from management interface, waiting...
+Mon Nov 17 20:30:23 2025 MANAGEMENT: Client connected from [AF_INET]127.0.0.1:25341
+Mon Nov 17 20:30:23 2025 MANAGEMENT: CMD 'state on'
+Mon Nov 17 20:30:23 2025 MANAGEMENT: CMD 'log all on'
+Mon Nov 17 20:30:23 2025 MANAGEMENT: CMD 'echo all on'
+Mon Nov 17 20:30:23 2025 MANAGEMENT: CMD 'bytecount 5'
+Mon Nov 17 20:30:23 2025 MANAGEMENT: CMD 'hold off'
+Mon Nov 17 20:30:23 2025 MANAGEMENT: CMD 'hold release'
+Mon Nov 17 20:30:23 2025 TCP/UDP: Preserving recently used remote address: [AF_INET]172.17.147.125:1194
+Mon Nov 17 20:30:23 2025 Socket Buffers: R=[65536->65536] S=[65536->65536]
+Mon Nov 17 20:30:23 2025 UDP link local: (not bound)
+Mon Nov 17 20:30:23 2025 UDP link remote: [AF_INET]172.17.147.125:1194
+Mon Nov 17 20:30:23 2025 MANAGEMENT: >STATE:1763393423,WAIT,,,,,,
+Mon Nov 17 20:30:23 2025 MANAGEMENT: >STATE:1763393423,AUTH,,,,,,
+Mon Nov 17 20:30:23 2025 TLS: Initial packet from [AF_INET]172.17.147.125:1194, sid=175bb712 a1cf670f
+Mon Nov 17 20:30:23 2025 VERIFY OK: depth=1, CN=ubi
+Mon Nov 17 20:30:23 2025 VERIFY KU OK
+Mon Nov 17 20:30:23 2025 Validating certificate extended key usage
+Mon Nov 17 20:30:23 2025 ++ Certificate has EKU (str) TLS Web Server Authentication, expects TLS Web Server Authentication
+Mon Nov 17 20:30:23 2025 VERIFY EKU OK
+Mon Nov 17 20:30:23 2025 VERIFY OK: depth=0, CN=ubi
+Mon Nov 17 20:30:23 2025 Control Channel: TLSv1.3, cipher TLSv1.3 TLS_AES_256_GCM_SHA384, 2048 bit RSA
+Mon Nov 17 20:30:23 2025 [ubi] Peer Connection Initiated with [AF_INET]172.17.147.125:1194
+Mon Nov 17 20:30:24 2025 MANAGEMENT: >STATE:1763393424,GET_CONFIG,,,,,,
+Mon Nov 17 20:30:24 2025 SENT CONTROL [ubi]: 'PUSH_REQUEST' (status=1)
+Mon Nov 17 20:30:24 2025 PUSH: Received control message: 'PUSH_REPLY,route 10.8.0.1,topology net30,ifconfig 10.8.0.6 10.8.0.5,peer-id 0,cipher AES-256-GCM'
+Mon Nov 17 20:30:24 2025 OPTIONS IMPORT: --ifconfig/up options modified
+Mon Nov 17 20:30:24 2025 OPTIONS IMPORT: route options modified
+Mon Nov 17 20:30:24 2025 OPTIONS IMPORT: peer-id set
+Mon Nov 17 20:30:24 2025 OPTIONS IMPORT: adjusting link_mtu to 1624
+Mon Nov 17 20:30:24 2025 OPTIONS IMPORT: data channel crypto options modified
+Mon Nov 17 20:30:24 2025 Data Channel: using negotiated cipher 'AES-256-GCM'
+Mon Nov 17 20:30:24 2025 Outgoing Data Channel: Cipher 'AES-256-GCM' initialized with 256 bit key
+Mon Nov 17 20:30:24 2025 Incoming Data Channel: Cipher 'AES-256-GCM' initialized with 256 bit key
+Mon Nov 17 20:30:24 2025 interactive service msg_channel=968
+Mon Nov 17 20:30:24 2025 ROUTE_GATEWAY 192.168.1.1/255.255.255.0 I=5 HWADDR=50:eb:f6:2a:73:4c
+Mon Nov 17 20:30:24 2025 open_tun
+Mon Nov 17 20:30:24 2025 TAP-WIN32 device [Подключение по локальной сети] opened: \\.\Global\{70719EB2-8C66-4933-A5F3-F2891ADE9CFF}.tap
+Mon Nov 17 20:30:24 2025 TAP-Windows Driver Version 9.24 
+Mon Nov 17 20:30:24 2025 Notified TAP-Windows driver to set a DHCP IP/netmask of 10.8.0.6/255.255.255.252 on interface {70719EB2-8C66-4933-A5F3-F2891ADE9CFF} [DHCP-serv: 10.8.0.5, lease-time: 31536000]
+Mon Nov 17 20:30:24 2025 Successful ARP Flush on interface [38] {70719EB2-8C66-4933-A5F3-F2891ADE9CFF}
+Mon Nov 17 20:30:24 2025 MANAGEMENT: >STATE:1763393424,ASSIGN_IP,,10.8.0.6,,,,
+Mon Nov 17 20:30:29 2025 TEST ROUTES: 1/1 succeeded len=1 ret=1 a=0 u/d=up
+Mon Nov 17 20:30:29 2025 MANAGEMENT: >STATE:1763393429,ADD_ROUTES,,,,,,
+Mon Nov 17 20:30:29 2025 C:\Windows\system32\route.exe ADD 10.8.0.1 MASK 255.255.255.255 10.8.0.5
+Mon Nov 17 20:30:29 2025 Route addition via service succeeded
+Mon Nov 17 20:30:29 2025 WARNING: this configuration may cache passwords in memory -- use the auth-nocache option to prevent this
+Mon Nov 17 20:30:29 2025 Initialization Sequence Completed
+Mon Nov 17 20:30:29 2025 MANAGEMENT: >STATE:1763393429,CONNECTED,SUCCESS,10.8.0.6,172.17.147.125,1194,,
+Mon Nov 17 20:30:58 2025 C:\Windows\system32\route.exe DELETE 10.8.0.1 MASK 255.255.255.255 10.8.0.5
+Mon Nov 17 20:30:58 2025 Route deletion via service succeeded
+Mon Nov 17 20:30:58 2025 Closing TUN/TAP interface
+Mon Nov 17 20:30:58 2025 TAP: DHCP address released
+Mon Nov 17 20:30:58 2025 SIGTERM[hard,] received, process exiting
+Mon Nov 17 20:30:58 2025 MANAGEMENT: >STATE:1763393458,EXITING,SIGTERM,,,,,
+
+По логам клиента и сервера видно, что соединение успешно!
