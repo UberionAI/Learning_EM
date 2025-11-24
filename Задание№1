@@ -1,0 +1,33 @@
+Задание №1:
+Работаю с веб-интерфейсом взаимодействия с БД (SQL Online AiDE)
+
+Создаю новую БД:
+
+CREATE Company.db
+
+CREATE TABLE Departments (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  depertment_id INTEGER,
+  name TEXT NOT NULL,
+  salary REAL
+)
+
+CREATE TABLE Projects (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    department_id INTEGER,
+    name TEXT NOT NULL,
+    start_date DATE,
+    end_date DATE,
+    comment TEXT,
+    budget REAL,
+    FOREIGN KEY (department_id) REFERENCES Departments(id)
+);
+
+CREATE TABLE Employees (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    position TEXT NOT NULL,
+    department_id INTEGER,
+    salary REAL,
+    FOREIGN KEY (department_id) REFERENCES Departments(id)
+);
