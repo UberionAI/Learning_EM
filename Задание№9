@@ -1,0 +1,14 @@
+В мою AIDE SQL интегрирован механизм автоматических транзакций, поэтому вручную прописовать BEGIN/COMMIT не нужно.
+
+INSERT INTO Departments (name, salary)
+VALUES ('Science', 35000);
+
+INSERT INTO Projects (name, comment, start_date, end_date, budget, department_id)
+VALUES ('Math', 'testTest', '12.12.12', '12.12.12', 34251,
+        (SELECT id FROM Departments WHERE name = 'Science'));
+
+SELECT * FROM PROJECTS WHERE id = 123458
+_______________________________
+id	department_id	name	start_date	end_date	comment	budget
+123458	1235	Math	12.12.12	12.12.12	testTest	34251
+________________________________
