@@ -1,0 +1,26 @@
+Задание№2:
+
+INSERT INTO Departments (id,depertment_id,name,salary) VALUES (
+  '123',
+  '12345',
+  'IT',
+  '10000'
+); 
+
+INSERT INTO Employees (id,name,position,department_id,salary) VALUES (
+  '123',
+  'Main',
+  'CEO',
+  '12345',
+  '1000'
+);
+
+INSERT INTO Projects (id,department_id,name,start_date,end_date,comment,budget) VALUES (
+  '123456',
+  '12345',
+  'testProj',
+  '01.02.2010',
+  '01.03.2011',
+  'test',
+  '100000'
+); 
