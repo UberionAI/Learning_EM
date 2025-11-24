@@ -1,0 +1,20 @@
+SELECT * FROM Employees 
+______________________________
+1	Robert	PM	123	150	null
+123	test_person	CEO	123	1000	null
+84249	Jhon	Trader	1234	200	Nickson
+534233	Jack	Supervisior	1234	350	Call
+65456430	Ura	CallSpec	1234	50	Urov
+______________________________
+
+Агрегатная функция для подсчёта всех сотрудников в рамках конкретных отделов:
+
+SELECT Departments.name AS department_name, COUNT(Employees.id) AS employee_count
+FROM Employees
+INNER JOIN Departments ON Employees.department_id = Departments.id
+GROUP BY Departments.name;
+______________________________
+department_name	employee_count
+IT	2
+Marketing	3
+________________________________
