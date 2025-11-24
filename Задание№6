@@ -1,0 +1,4 @@
+CREATE INDEX idx_ln ON Employees (LastName);
+Теперь поиск по индексированному столбцу будет происходить намного быстрее
+Например:
+SELECT * FROM Employees WHERE LastName = 'Test';
