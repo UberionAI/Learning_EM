@@ -1,0 +1,16 @@
+SELECT * FROM Employees WHERE id=1
+_____________________
+1	Alex	PM	123	150
+_____________________
+
+UPDATE Employees
+SET name = 'Robert'
+WHERE id = 1;
+
+SELECT * FROM Employees
+WHERE id = 1
+
+__________________
+1	Robert	PM	123	150
+__________________
+
