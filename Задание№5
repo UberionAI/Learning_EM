@@ -1,0 +1,13 @@
+SELECT * FROM Projects
+_____________________
+2	12345	test_project	01.01.2025	02.01.2025	test	50000
+123456	12345	testProj	01.02.2010	01.03.2011	test	100000
+_____________________
+
+DELETE FROM Projects WHERE id = 2
+
+SELECT * FROM Projects
+
+___________________
+123456	12345	testProj	01.02.2010	01.03.2011	test	100000
+___________________
