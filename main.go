@@ -76,21 +76,50 @@ func main() {
 	//
 
 	// Задание №5:
-	newAge := 25
-	result, err := db.Exec(`
-        UPDATE users 
-        SET age = $1 
-        WHERE username = $2`,
-		newAge, "Alex")
+	//newAge := 25
+	//result, err := db.Exec(`
+	//    UPDATE users
+	//    SET age = $1
+	//    WHERE username = $2`,
+	//	newAge, "Alex")
+	//
+	//if err != nil {
+	//	log.Fatal("Error update:", err)
+	//}
+	//
+	//rowsAffected, err := result.RowsAffected()
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+	//
+	//fmt.Printf("Updated rows: %d\nAlex is now %d \n", rowsAffected, newAge)
 
-	if err != nil {
-		log.Fatal("Error update:", err)
-	}
-
-	rowsAffected, err := result.RowsAffected()
+	// Задание №6
+	newUser := "VovaTest"
+	tx, err := db.Begin()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Printf("Updated rows: %d\nAlex is now %d \n", rowsAffected, newAge)
+	var createdId int
+	err = tx.QueryRow(`
+    INSERT INTO users (username, age) VALUES ($1, $2) 
+    RETURNING id`,
+		newUser, 22).Scan(&createdId)
+	if err != nil {
+		tx.Rollback()
+		log.Fatal(err)
+	}
+
+	_, err = tx.Exec("DELETE FROM users WHERE id = $1", createdId)
+	if err != nil {
+		tx.Rollback()
+		log.Fatal(err)
+	}
+
+	if err := tx.Commit(); err != nil {
+		log.Fatal("error commit:", err)
+	}
+
+	fmt.Printf("transaction is done! %s (ID: %d) created and deleted in one tx\n", newUser, createdId)
 }
