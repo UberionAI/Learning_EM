@@ -27,19 +27,35 @@ func main() {
 
 	fmt.Println("Подключение успешно!")
 
-	rows, err := db.Query("SELECT id, username FROM users")
+	//	Задание №2
+	//rows, err := db.Query("SELECT id, username FROM users")
+	//if err != nil {
+	//	log.Fatal("query error: ", err)
+	//}
+	//defer rows.Close()
+	//
+	//for rows.Next() {
+	//	var id int
+	//	var username string
+	//	if err := rows.Scan(&id, &username); err != nil {
+	//		log.Fatal("error reading:", err)
+	//	}
+	//
+	//	fmt.Printf("id:%d name:%s\n", id, username)
+	//}
+	username := "Alex"
+	rows, err := db.Query("SELECT id FROM users WHERE username = $1", username)
 	if err != nil {
 		log.Fatal("query error: ", err)
 	}
 	defer rows.Close()
-
+	fmt.Printf("user with username: %s\n", username)
 	for rows.Next() {
 		var id int
-		var username string
-		if err := rows.Scan(&id, &username); err != nil {
+
+		if err := rows.Scan(&id); err != nil {
 			log.Fatal("error reading:", err)
 		}
-
 		fmt.Printf("id:%d name:%s\n", id, username)
 	}
 }
