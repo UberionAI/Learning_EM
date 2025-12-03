@@ -62,15 +62,35 @@ func main() {
 	//}
 
 	// Задание №4
-	newUser := "Gregory"
-	var newId int
-	err = db.QueryRow(`
-        INSERT INTO users (username) VALUES ($1) 
-        RETURNING id`,
-		newUser).Scan(&newId)
+	//	newUser := "Gregory"
+	//	var newId int
+	//	err = db.QueryRow(`
+	//        INSERT INTO users (username) VALUES ($1)
+	//        RETURNING id`,
+	//		newUser).Scan(&newId)
+	//
+	//	if err != nil {
+	//		log.Fatal("Error inserting:", err)
+	//	}
+	//	fmt.Printf("Добавлен: %s (ID: %d)\n", newUser, newId)
+	//
+
+	// Задание №5:
+	newAge := 25
+	result, err := db.Exec(`
+        UPDATE users 
+        SET age = $1 
+        WHERE username = $2`,
+		newAge, "Alex")
 
 	if err != nil {
-		log.Fatal("Error inserting:", err)
+		log.Fatal("Error update:", err)
 	}
-	fmt.Printf("Добавлен: %s (ID: %d)\n", newUser, newId)
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Printf("Updated rows: %d\nAlex is now %d \n", rowsAffected, newAge)
 }
