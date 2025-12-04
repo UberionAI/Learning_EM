@@ -1,43 +1,53 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"github.com/jackc/pgx/v5/pgxpool"
 	_ "github.com/lib/pq"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
 	"log"
+	"sync"
+	"time"
 )
 
-type User struct {
-	ID       uint `gorm:"primaryKey"`
-	Username string
-	Age      uint
-}
-
 func main() {
-	// Задание №7
-	//Установим ГОРМ и драйвер для горма
-	dsn := "host=localhost port=5432 user=postgres password=password dbname=app_db sslmode=disable"
+	ctx := context.Background()
 
-	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	//custom config pgxpool
+	config, err := pgxpool.ParseConfig("postgres://postgres:password@localhost:5432/app_db?sslmode=disable")
 	if err != nil {
-		log.Fatal(err)
+		panic(err)
 	}
+	config.MaxConns = 20
+	config.MinConns = 2
+	config.MaxConnLifetime = 50 * time.Second
+	config.MaxConnIdleTime = 30 * time.Second
+	pool, err := pgxpool.NewWithConfig(ctx, config)
+	if err != nil {
+		panic(err)
+	}
+	defer pool.Close()
 
-	db.AutoMigrate(&User{})
+	//creating poll workers for testing
+	var wg sync.WaitGroup
+	wg.Add(20)
 
-	newUser := User{Username: "VovaGORM", Age: 30}
-	db.Create(&newUser)
-	fmt.Printf("User %s created with ID %v and age %d", newUser.Username, newUser.ID, newUser.Age)
+	for i := 0; i < 20; i++ {
+		go func() {
+			defer wg.Done()
+			var count int
+			err := pool.QueryRow(ctx, "SELECT COUNT(*) FROM users").Scan(&count)
+			if err != nil {
+				log.Printf("QueryRow failed: %v", err)
+			}
+			fmt.Printf("Pool in work! Total users: %d\n", count)
+		}()
+	}
+	wg.Wait()
 
-	var user User
-	db.First(&user, "username = ?", "VovaGORM")
-	fmt.Printf("\nUser %s found with ID %v", user.Username, user.ID)
-
-	user.Age = 40
-	db.Save(&user)
-	fmt.Printf("\nUser %s updated to age %d", user.Username, user.Age)
-
-	db.Delete(&user)
-	fmt.Printf("\nUser %s deleted", user.Username)
+	stats := pool.Stat()
+	fmt.Printf("Pool stats: %d/%d/%d active/idle/max\n",
+		stats.AcquiredConns(), stats.IdleConns(), stats.MaxConns())
+	fmt.Printf("Lifetime: %v, Idle time: %v\n",
+		config.MaxConnLifetime, config.MaxConnIdleTime)
 }
