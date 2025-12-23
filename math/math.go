@@ -12,3 +12,10 @@ func SumOnlyNatural(a int, b int) int {
 	}
 	return (a + b)
 }
+
+func Abs(x int) int {
+	if x < 0 {
+		return -x
+	}
+	return x
+}

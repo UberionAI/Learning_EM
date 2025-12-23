@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8e292c20-a4b7-47e6-9e0c-c6ddda4fb903" name="Changes" comment="Задание №1">
+    <list default="true" id="8e292c20-a4b7-47e6-9e0c-c6ddda4fb903" name="Changes" comment="Задание №3">
+      <change afterPath="$PROJECT_DIR$/math/math_quick_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/math/math.go" beforeDir="false" afterPath="$PROJECT_DIR$/math/math.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/math/math_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/math/math_test.go" afterDir="false" />
     </list>
@@ -90,7 +92,9 @@
     <MESSAGE value="Задание №9" />
     <MESSAGE value="Задание №10" />
     <MESSAGE value="Задание №1" />
-    <option name="LAST_COMMIT_MESSAGE" value="Задание №1" />
+    <MESSAGE value="Задание №2" />
+    <MESSAGE value="Задание №3" />
+    <option name="LAST_COMMIT_MESSAGE" value="Задание №3" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
