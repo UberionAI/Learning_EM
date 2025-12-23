@@ -4,13 +4,8 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8e292c20-a4b7-47e6-9e0c-c6ddda4fb903" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/errorhandling/error.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/errorhandling/error_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="8e292c20-a4b7-47e6-9e0c-c6ddda4fb903" name="Changes" comment="Задание №9">
+      <change afterPath="$PROJECT_DIR$/server/server.go" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -110,7 +105,6 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Задание №8" />
-    <MESSAGE value="Задание №9" />
     <MESSAGE value="Задание №10" />
     <MESSAGE value="Задание №1" />
     <MESSAGE value="Задание №2" />
@@ -119,7 +113,8 @@
     <MESSAGE value="Задание №5" />
     <MESSAGE value="Задание №6" />
     <MESSAGE value="Задание №7" />
-    <option name="LAST_COMMIT_MESSAGE" value="" />
+    <MESSAGE value="Задание №9" />
+    <option name="LAST_COMMIT_MESSAGE" value="Задание №9" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
