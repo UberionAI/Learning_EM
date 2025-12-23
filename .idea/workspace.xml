@@ -4,9 +4,10 @@
     <option name="autoReloadType" value="ALL" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="8e292c20-a4b7-47e6-9e0c-c6ddda4fb903" name="Changes" comment="Задание №6">
-      <change afterPath="$PROJECT_DIR$/time/time.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/time/time_test.go" afterDir="false" />
+    <list default="true" id="8e292c20-a4b7-47e6-9e0c-c6ddda4fb903" name="Changes" comment="Задание №7">
+      <change afterPath="$PROJECT_DIR$/concurrency/concurrency.go" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/concurrency/concurrency_test.go" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -114,7 +115,8 @@
     <MESSAGE value="Задание №4" />
     <MESSAGE value="Задание №5" />
     <MESSAGE value="Задание №6" />
-    <option name="LAST_COMMIT_MESSAGE" value="Задание №6" />
+    <MESSAGE value="Задание №7" />
+    <option name="LAST_COMMIT_MESSAGE" value="Задание №7" />
   </component>
   <component name="VgoProject">
     <settings-migrated>true</settings-migrated>
