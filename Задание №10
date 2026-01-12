@@ -1,0 +1,11 @@
+https://hub.docker.com/repository/docker/uberionn/learning-em-app/general
+
+-------
+docker push uberionn/learning-em-app:v1        
+The push refers to repository [docker.io/uberionn/learning-em-app]
+961dc1932f67: Pushed
+17a39c0ba978: Pushed
+9f3b7ffcc9a4: Pushed
+a394ef7c4da8: Pushed
+572aa1a0ace9: Pushed
+v1: digest: sha256:aa33d9421f49fce7f653e7cfb92eaa0fc0d7a2e29eb8aa36de0f80ec8b5e5f4c size: 856
