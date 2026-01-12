@@ -10,6 +10,8 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    networks:
+      - learning_net
 
   app:
     build: .
@@ -17,6 +19,8 @@ services:
       - db
     environment:
       DATABASE_URL: "postgres://postgres:password@db:5432/app_db?sslmode=disable"
+    networks:
+      - learning_net
 
   web:
     image: nginx:alpine
@@ -24,6 +28,11 @@ services:
       - "8080:80"
     volumes:
       - ./pages:/usr/share/nginx/html:ro
+    networks:
+      - learning_net
 
+networks:
+  learning_net:
+    driver: bridge
 volumes:
   postgres_data:
