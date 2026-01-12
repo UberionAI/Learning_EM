@@ -7,6 +7,8 @@ services:
       POSTGRES_DB: app_db
     ports:
       - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
   app:
     build: .
@@ -14,3 +16,13 @@ services:
       - db
     environment:
       DATABASE_URL: "postgres://postgres:password@db:5432/app_db?sslmode=disable"
+
+  web:
+    image: nginx:alpine
+    ports:
+      - "8080:80"
+    volumes:
+      - ./pages:/usr/share/nginx/html:ro
+
+volumes:
+  postgres_data:
