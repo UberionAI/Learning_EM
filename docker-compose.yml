@@ -1,4 +1,3 @@
-#building and starting app
 services:
   db:
     image: postgres:16-alpine
@@ -14,11 +13,15 @@ services:
       - learning_net
 
   app:
-    build: .
+    build:
+      context: .
+      args:
+        - APP_VERSION=2.0.0
     depends_on:
       - db
     environment:
       DATABASE_URL: "postgres://postgres:password@db:5432/app_db?sslmode=disable"
+      APP_VERSION: "Learning_EM_T9"
     networks:
       - learning_net
 

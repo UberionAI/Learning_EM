@@ -1,5 +1,10 @@
+ARG APP_VERSION="1.0.0"
+
 # building
 FROM golang:1.24-alpine AS builder
+
+ARG APP_VERSION
+ENV APP_VERSION=$APP_VERSION
 
 WORKDIR /app
 
