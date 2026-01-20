@@ -1,27 +1,15 @@
 package main
 
-import (
-	"fmt"
-	"os"
-)
-
-func Add(a, b int) int {
-	return a + b
-}
+import "fmt"
 
 func main() {
-	_ = Add(1, 2)
-
-	if err := os.Remove("non-existing.txt"); err != nil {
-		fmt.Println("remove failed", err)
-	}
+	fmt.Println("hello")
 }
 
-//Задание №10
-//Первый запуск: errcheck ./...
-//main.go:15:14:  fmt.Fprintln(os.Stdout, "hello")
-//main.go:16:11:  os.Remove("non-existent-file") // <-- errcheck
+//Задание 7
+//PS GolandProjects\Learning_EM> staticcheck ./...
+//main.go:5:7: const unusedConst is unused (U1000)
+//main.go:7:6: func unusedFunc is unused (U1000)
 
-//После исправления:
-//errcheck ./...
-//Пусто....
+//Когда убрали лишнее и применили staticcheck ./... повторно
+//пусто...
