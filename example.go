@@ -4,21 +4,10 @@ import "fmt"
 
 func main() {
 	name := "Semen"
-	//a := 1
-	//b := 2
-	//c := a + b
-	//fmt.Println("Sum:", c)
+	name2 := "Oleg"
 	fmt.Printf("age: %s\n", name)
 }
 
-//Задание №1
-// go fmt .\example.go
-
-//Задание №2
-//go vet ./...
-//# Learning_EM
-//# [Learning_EM]
-//.\example.go:11:2: fmt.Printf format %d has arg name of wrong type string
-//после исправления
-//go vet ./...
-//пусто...
+//Задание 3
+//level=error msg="[linters_context] typechecking error: : # Learning_EM\n.\\example.go:7:2: name2 declared and not used"
+//0 issues.
