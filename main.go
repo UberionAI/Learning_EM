@@ -1,15 +1,27 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+)
 
 func main() {
-	fmt.Println("hello")
+	if len(os.Args) < 2 {
+		fmt.Println("usage: app <name>")
+		os.Exit(1)
+	}
+
+	name := os.Args[1]
+	fmt.Println("hello,", name)
 }
 
-//Задание 7
-//PS GolandProjects\Learning_EM> staticcheck ./...
-//main.go:5:7: const unusedConst is unused (U1000)
-//main.go:7:6: func unusedFunc is unused (U1000)
-
-//Когда убрали лишнее и применили staticcheck ./... повторно
-//пусто...
+//Задание 8
+//Пусть будут два коммента от юзеров по начальной версии программы:
+//-При отсутствии аргумента программа паникует с непонятным runtime‑stackом.
+//-Нет сообщений пользователю
+// Исправим данные ошибки
+//старая(проблемная версия):
+//func main() {
+//	arg := os.Args[1]
+//	_ = arg
+//}
