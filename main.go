@@ -1,22 +1,29 @@
 package main
 
 import (
-	"errors"
 	"fmt"
+	"sync"
+	"time"
 )
 
-func DivisionNum(a, b float64) (float64, error) {
-	if b == 0 {
-		return 0, errors.New("деление на ноль")
-	}
-	return a / b, nil
+func computeSquare(num int, resChan chan<- int, wg *sync.WaitGroup) {
+	defer wg.Done()
+	time.Sleep(time.Millisecond * 100)
+	resChan <- num * num
 }
 
 func main() {
-	res, err := DivisionNum(1.0, 2.0)
-	if err != nil {
-		fmt.Println("Ошибка:", err)
-		return
+	numbers := []int{1, 2, 3, 4, 5, 6, 7, 8, 9}
+	resChan := make(chan int, len(numbers))
+	var wg sync.WaitGroup
+
+	for _, number := range numbers {
+		wg.Add(1)
+		go computeSquare(number, resChan, &wg)
 	}
-	fmt.Println("Результат:", res)
+	wg.Wait()
+	close(resChan)
+	for square := range resChan {
+		fmt.Println(square)
+	}
 }
