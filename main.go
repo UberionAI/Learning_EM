@@ -1,14 +1,22 @@
 package main
 
-import "fmt"
+import (
+	"errors"
+	"fmt"
+)
 
-func ChangeValue(ptr *int) {
-	*ptr = 100
+func DivisionNum(a, b float64) (float64, error) {
+	if b == 0 {
+		return 0, errors.New("деление на ноль")
+	}
+	return a / b, nil
 }
 
 func main() {
-	a := 10
-	fmt.Println("До:", a)
-	ChangeValue(&a)
-	fmt.Println("Новое значение:", a)
+	res, err := DivisionNum(1.0, 2.0)
+	if err != nil {
+		fmt.Println("Ошибка:", err)
+		return
+	}
+	fmt.Println("Результат:", res)
 }
