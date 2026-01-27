@@ -2,10 +2,15 @@ package main
 
 import "fmt"
 
-func Sum(a int, b int) int {
-	return a + b
+func SumElementSlice(s []int) int {
+	sum := 0
+	for _, a := range s {
+		sum += a
+	}
+	return sum
 }
 
 func main() {
-	fmt.Println(Sum(1, 2))
+	s := []int{1, 2, 3}
+	fmt.Println(SumElementSlice(s))
 }
