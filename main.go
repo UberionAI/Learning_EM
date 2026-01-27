@@ -2,15 +2,13 @@ package main
 
 import "fmt"
 
-func SumElementSlice(s []int) int {
-	sum := 0
-	for _, a := range s {
-		sum += a
-	}
-	return sum
+type Person struct {
+	Name string
+	Age  int
+	City string
 }
 
 func main() {
-	s := []int{1, 2, 3}
-	fmt.Println(SumElementSlice(s))
+	p := Person{Name: "Vova", Age: 18, City: "New York"}
+	fmt.Println(p)
 }
