@@ -1,0 +1,6 @@
+linters-settings:
+  errcheck:
+    exclude-functions:
+      - sarama.Consumer.Close
+      - sarama.PartitionConsumer.Close
+      - sarama.AsyncProducer.AsyncClose
