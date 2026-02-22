@@ -84,7 +84,7 @@ func main() {
 		}
 	}
 
-	time.Sleep(3 * time.Second)
+	time.Sleep(5 * time.Second)
 	cancel()
 	wg.Wait()
 	log.Printf("Group consumer processed %d messages!", handler.processed)
