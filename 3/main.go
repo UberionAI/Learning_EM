@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"sync"
@@ -10,67 +11,68 @@ import (
 )
 
 const (
-	broker     = "localhost:9092"
-	topic      = "test-topic"
-	numWorkers = 5
+	broker  = "localhost:9092"
+	topic   = "test-topic"
+	groupID = "test-group"
 )
+
+type messageHandler struct {
+	processed int
+	mu        sync.Mutex
+}
+
+func (h *messageHandler) Setup(_ sarama.ConsumerGroupSession) error   { return nil }
+func (h *messageHandler) Cleanup(_ sarama.ConsumerGroupSession) error { return nil }
+func (h *messageHandler) ConsumeClaim(sess sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
+	for msg := range claim.Messages() {
+		h.mu.Lock()
+		h.processed++
+		h.mu.Unlock()
+
+		log.Printf("group consumed: offset=%d value=%s", msg.Offset, string(msg.Value))
+		sess.MarkMessage(msg, "")
+	}
+	return nil
+}
 
 func main() {
 	config := sarama.NewConfig()
 	config.Version = sarama.V2_1_0_0
+	config.Consumer.Group.Rebalance.Strategy = sarama.BalanceStrategyRoundRobin
+	config.Consumer.Offsets.Initial = sarama.OffsetOldest
 
 	producer, err := sarama.NewAsyncProducer([]string{broker}, config)
 	if err != nil {
 		log.Fatalf("producer: %v", err)
 	}
-	defer func() {
-		producer.AsyncClose()
-		for range producer.Errors() {
-		}
-		for range producer.Successes() {
-		}
-	}()
+	defer producer.AsyncClose()
 
-	consumer, err := sarama.NewConsumer([]string{broker}, config)
+	group, err := sarama.NewConsumerGroup([]string{broker}, groupID, config)
 	if err != nil {
-		log.Fatalf("consumer: %v", err)
+		log.Fatalf("consumer group: %v", err)
 	}
-	defer func() { _ = consumer.Close() }()
+	defer func() { _ = group.Close() }()
 
-	pc, err := consumer.ConsumePartition(topic, 0, sarama.OffsetOldest)
-	if err != nil {
-		log.Fatalf("partition consumer: %v", err)
-	}
-	defer func() { _ = pc.Close() }()
-
-	messages := make(chan *sarama.ConsumerMessage, 100)
+	handler := &messageHandler{}
+	ctx, cancel := context.WithCancel(context.Background())
 	var wg sync.WaitGroup
+	wg.Add(1)
 
-	for w := 0; w < numWorkers; w++ {
-		wg.Add(1)
-		go func(workerID int) {
-			defer wg.Done()
-			for msg := range messages {
-				time.Sleep(100 * time.Millisecond)
-				log.Printf("worker-%d: offset=%d value=%s",
-					workerID, msg.Offset, string(msg.Value))
-			}
-		}(w)
-	}
-
-	done := make(chan struct{})
 	go func() {
-		defer close(messages)
-		count := 0
-		for msg := range pc.Messages() {
-			messages <- msg
-			count++
-			if count == 10 {
+		defer wg.Done()
+		for {
+			if err := group.Consume(ctx, []string{topic}, handler); err != nil {
+				log.Printf("consume error: %v", err)
+			}
+			if ctx.Err() != nil {
 				return
 			}
 		}
 	}()
 
+	time.Sleep(2 * time.Second)
+
+	// Producer
 	for i := 0; i < 10; i++ {
 		value := fmt.Sprintf("message-%d", i)
 		msg := &sarama.ProducerMessage{Topic: topic, Value: sarama.StringEncoder(value)}
@@ -82,7 +84,8 @@ func main() {
 		}
 	}
 
-	<-done
+	time.Sleep(3 * time.Second)
+	cancel()
 	wg.Wait()
-	log.Println("Multi-threaded consumer done!")
+	log.Printf("Group consumer processed %d messages!", handler.processed)
 }
