@@ -7,6 +7,8 @@ import (
 	"github.com/IBM/sarama"
 )
 
+//docker exec kafka /opt/kafka/bin/kafka-topics.sh --create --topic test-topic --partitions 3 --replication-factor 1 --bootstrap-server localhost:9092
+
 const (
 	broker = "localhost:9092"
 	topic  = "test-topic"
