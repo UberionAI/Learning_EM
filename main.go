@@ -13,21 +13,23 @@ const (
 )
 
 func main() {
-	//из докера поднят контейнер с кафкой:
-	//21c4cab0a70e:/$ /opt/kafka/bin/kafka-topics.sh --create \
-	//  --bootstrap-server localhost:9092 \
-	//  --replication-factor 1 \
-	//  --partitions 1 \
-	//  --topic test-topic
-	//Created topic test-topic.
-	//21c4cab0a70e:/$ /opt/kafka/bin/kafka-topics.sh --describe \
-	//  --topic test-topic
-	//or: 1   Configs: min.insync.replicas=1,segment.bytes=1073741824
-	//        Topic: test-topic       Partition: 0    Leader: 1       Replicas: 1     Isr: 1  Elr:  LastKnownElr:
-
 	config := sarama.NewConfig()
 	config.Version = sarama.V2_1_0_0
 	config.Producer.Return.Successes = true
+
+	admin, err := sarama.NewClusterAdmin([]string{broker}, config)
+	if err != nil {
+		log.Fatalf("error with admin: %v", err)
+	}
+	defer admin.Close()
+
+	err = admin.CreateTopic(topic, &sarama.TopicDetail{
+		NumPartitions:     1,
+		ReplicationFactor: 1,
+	}, false)
+	if err != nil {
+		log.Printf("topic already exists or error: %v", err)
+	}
 
 	producer, err := sarama.NewSyncProducer([]string{broker}, config)
 	if err != nil {
