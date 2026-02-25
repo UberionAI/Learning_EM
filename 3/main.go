@@ -3,42 +3,20 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/IBM/sarama"
 	"log"
 	"sync"
 	"time"
-
-	"github.com/IBM/sarama"
 )
 
 const (
-	broker  = "localhost:9092"
-	topic   = "test-topic"
-	groupID = "test-group"
+	broker = "localhost:9092"
+	topic  = "test-topic"
 )
-
-type messageHandler struct {
-	processed int
-	mu        sync.Mutex
-}
-
-func (h *messageHandler) Setup(_ sarama.ConsumerGroupSession) error   { return nil }
-func (h *messageHandler) Cleanup(_ sarama.ConsumerGroupSession) error { return nil }
-func (h *messageHandler) ConsumeClaim(sess sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
-	for msg := range claim.Messages() {
-		h.mu.Lock()
-		h.processed++
-		h.mu.Unlock()
-
-		log.Printf("group consumed: offset=%d value=%s", msg.Offset, string(msg.Value))
-		sess.MarkMessage(msg, "")
-	}
-	return nil
-}
 
 func main() {
 	config := sarama.NewConfig()
 	config.Version = sarama.V2_1_0_0
-	config.Consumer.Group.Rebalance.Strategy = sarama.BalanceStrategyRoundRobin
 	config.Consumer.Offsets.Initial = sarama.OffsetOldest
 
 	producer, err := sarama.NewAsyncProducer([]string{broker}, config)
@@ -47,45 +25,51 @@ func main() {
 	}
 	defer producer.AsyncClose()
 
-	group, err := sarama.NewConsumerGroup([]string{broker}, groupID, config)
-	if err != nil {
-		log.Fatalf("consumer group: %v", err)
-	}
-	defer func() { _ = group.Close() }()
-
-	handler := &messageHandler{}
-	ctx, cancel := context.WithCancel(context.Background())
 	var wg sync.WaitGroup
-	wg.Add(1)
+	ctx, cancel := context.WithCancel(context.Background())
 
-	go func() {
-		defer wg.Done()
-		for {
-			if err := group.Consume(ctx, []string{topic}, handler); err != nil {
-				log.Printf("consume error: %v", err)
-			}
-			if ctx.Err() != nil {
+	for partition := 0; partition < 3; partition++ {
+		wg.Add(1)
+		go func(p int) {
+			defer wg.Done()
+			consumer, err := sarama.NewConsumer([]string{broker}, config)
+			if err != nil {
+				log.Printf("consumer %d: %v", p, err)
 				return
 			}
-		}
-	}()
+			defer consumer.Close()
+
+			pc, err := consumer.ConsumePartition(topic, int32(p), sarama.OffsetOldest)
+			if err != nil {
+				log.Printf("partition %d: %v", p, err)
+				return
+			}
+			defer pc.Close()
+
+			log.Printf("Goroutine partition=%d started", p)
+			for {
+				select {
+				case msg := <-pc.Messages():
+					log.Printf("P%d consumed: offset=%d value=%s", p, msg.Offset, string(msg.Value))
+				case <-ctx.Done():
+					return
+				}
+			}
+		}(partition)
+	}
 
 	time.Sleep(2 * time.Second)
-
-	// Producer
 	for i := 0; i < 10; i++ {
 		value := fmt.Sprintf("message-%d", i)
-		msg := &sarama.ProducerMessage{Topic: topic, Value: sarama.StringEncoder(value)}
-		select {
-		case producer.Input() <- msg:
-			log.Printf("produced: %s", value)
-		case perr := <-producer.Errors():
-			log.Fatalf("producer error: %v", perr)
+		producer.Input() <- &sarama.ProducerMessage{
+			Topic: topic,
+			Value: sarama.StringEncoder(value),
 		}
+		log.Printf("produced: %s", value)
 	}
 
 	time.Sleep(5 * time.Second)
 	cancel()
 	wg.Wait()
-	log.Printf("Group consumer processed %d messages!", handler.processed)
+	log.Println(" multi-consumer done!")
 }
