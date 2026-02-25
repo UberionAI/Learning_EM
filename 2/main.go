@@ -75,7 +75,7 @@ func main() {
 
 		case producer.Input() <- msg:
 			log.Printf("sent async message: %s", value)
-		case err := <-partitions.Errors():
+		case err := <-producer.Errors():
 			log.Fatalf("async producer error: %v", err)
 			//if err != nil {
 			//	log.Fatalf("error with sending message: %v", err)
