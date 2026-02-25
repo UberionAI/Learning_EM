@@ -27,7 +27,7 @@ func main() {
 
 	config := sarama.NewConfig()
 	config.Version = sarama.V2_1_0_0
-	config.Producer.Return.Successes = true
+	//config.Producer.Return.Successes = true
 
 	producer, err := sarama.NewAsyncProducer([]string{broker}, config)
 	if err != nil {

@@ -4,13 +4,16 @@ import (
 	"fmt"
 	"github.com/IBM/sarama"
 	"log"
-	"time"
 )
 
 const (
 	broker = "localhost:9092"
 	topic  = "test-topic"
 )
+
+type Consumer struct {
+	ready chan struct{}
+}
 
 func main() {
 	config := sarama.NewConfig()
@@ -50,10 +53,15 @@ func main() {
 	}
 	defer partitions.Close()
 
+	c := &Consumer{ready: make(chan struct{})}
+
 	//starting reading in goroutine
 	done := make(chan struct{})
 	go func() {
 		defer close(done)
+
+		close(c.ready)
+
 		count := 0
 		for msg := range partitions.Messages() {
 			log.Printf("consumed message: offset=%d value=%s", msg.Offset, string(msg.Value))
@@ -64,7 +72,9 @@ func main() {
 		}
 	}()
 
-	time.Sleep(500 * time.Millisecond)
+	//time.Sleep(500 * time.Millisecond)
+	<-c.ready
+	log.Println("Consumer ready, starting producer")
 
 	for i := 0; i < 10; i++ {
 		value := fmt.Sprintf("message-%d", i)

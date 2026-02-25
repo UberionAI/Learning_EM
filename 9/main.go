@@ -3,7 +3,10 @@ package main
 import (
 	"context"
 	"log"
+	"os"
+	"os/signal"
 	"sync"
+	"syscall"
 	"time"
 
 	"github.com/IBM/sarama"
@@ -70,8 +73,20 @@ func main() {
 		}
 	}()
 
-	time.Sleep(10 * time.Second)
-	cancel()
+	//time.Sleep(10 * time.Second)
+	//cancel()
+	sigCh := make(chan os.Signal, 1)
+	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
+
+	log.Println("consumer started, press Ctrl+C to stop")
+
+	select {
+	case sig := <-sigCh:
+		log.Printf("received signal: %v, shutting down...", sig)
+		cancel()
+	case <-ctx.Done():
+		log.Println("context cancelled, shutting down...")
+	}
 	wg.Wait()
 	log.Println("consumer with acks stopped")
 }
