@@ -82,7 +82,8 @@ func main() {
 			//}
 			//log.Printf("sent message: %s", value)
 		}
-		<-done
-		log.Println("done!")
+
 	}
+	<-done
+	log.Println("done!")
 }
