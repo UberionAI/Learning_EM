@@ -39,7 +39,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("error with consumer: %v", err)
 	}
-	//defer consumer.Close()
+	defer consumer.Close()
 
 	//start partition 0
 	partitions, err := consumer.ConsumePartition(topic, 0, sarama.OffsetOldest)
