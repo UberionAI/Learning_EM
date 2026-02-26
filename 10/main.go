@@ -32,7 +32,7 @@ func (h *keyValueHandler) ConsumeClaim(sess sarama.ConsumerGroupSession, claim s
 		log.Printf("received: key=%q value=%q partition=%d offset=%d",
 			string(msg.Key), string(msg.Value), msg.Partition, msg.Offset)
 
-		//sess.MarkMessage(msg, "")
+		sess.MarkMessage(msg, "")
 
 		time.Sleep(100 * time.Millisecond)
 	}
