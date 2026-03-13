@@ -36,7 +36,7 @@ func registerUser(w http.ResponseWriter, r *http.Request) {
 	users[id] = u
 
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(u)
+	json.NewEncoder(w).Encode(u) //nolint:errcheck
 }
 
 func listUsers(w http.ResponseWriter, r *http.Request) {
@@ -44,7 +44,7 @@ func listUsers(w http.ResponseWriter, r *http.Request) {
 	for _, u := range users {
 		list = append(list, u)
 	}
-	json.NewEncoder(w).Encode(list)
+	json.NewEncoder(w).Encode(list) //nolint:errcheck
 }
 
 func updateOrDeleteUser(w http.ResponseWriter, r *http.Request) {
@@ -70,7 +70,7 @@ func updateOrDeleteUser(w http.ResponseWriter, r *http.Request) {
 		}
 		u.ID = id
 		users[id] = u
-		json.NewEncoder(w).Encode(u)
+		json.NewEncoder(w).Encode(u) //nolint:errcheck
 		return
 	}
 

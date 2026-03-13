@@ -1,0 +1,10 @@
+linters:
+  disable-all: true
+  enable:
+    - govet
+    - staticcheck
+
+run:
+  skip-dirs:
+    - task_1
+    - task_2
