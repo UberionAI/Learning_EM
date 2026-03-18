@@ -6,9 +6,13 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"sync"
 )
 
-var users = make(map[string]models.User)
+var (
+	users = make(map[string]models.User)
+	mu    sync.Mutex
+)
 
 func UsersHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
@@ -26,6 +30,8 @@ func UsersHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func registerUser(w http.ResponseWriter, r *http.Request) {
+	mu.Lock()
+	defer mu.Unlock()
 	var u models.User
 	if err := json.NewDecoder(r.Body).Decode(&u); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -40,6 +46,8 @@ func registerUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func listUsers(w http.ResponseWriter, r *http.Request) {
+	mu.Lock()
+	defer mu.Unlock()
 	list := make([]models.User, 0, len(users))
 	for _, u := range users {
 		list = append(list, u)
@@ -48,6 +56,8 @@ func listUsers(w http.ResponseWriter, r *http.Request) {
 }
 
 func updateOrDeleteUser(w http.ResponseWriter, r *http.Request) {
+	mu.Lock()
+	defer mu.Unlock()
 	path := strings.Trim(r.URL.Path, "/")
 	parts := strings.Split(path, "/")
 
