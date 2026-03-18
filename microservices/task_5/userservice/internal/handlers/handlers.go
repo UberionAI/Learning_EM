@@ -6,10 +6,14 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"sync"
 	"userservice/internal/models"
 )
 
-var users = make(map[string]models.User)
+var (
+	users = make(map[string]models.User)
+	mu    sync.Mutex
+)
 
 const kafkaBroker = "127.0.0.1:9092"
 const topic = "user-registrations"
@@ -29,6 +33,9 @@ func UsersHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func registerUser(w http.ResponseWriter, r *http.Request) {
+	mu.Lock()
+	defer mu.Unlock()
+
 	var u models.User
 	if err := json.NewDecoder(r.Body).Decode(&u); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
@@ -55,6 +62,9 @@ func registerUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func listUsers(w http.ResponseWriter, r *http.Request) {
+	mu.Lock()
+	defer mu.Unlock()
+
 	list := make([]models.User, 0, len(users))
 	for _, u := range users {
 		list = append(list, u)
@@ -63,6 +73,9 @@ func listUsers(w http.ResponseWriter, r *http.Request) {
 }
 
 func updateOrDeleteUser(w http.ResponseWriter, r *http.Request) {
+	mu.Lock()
+	defer mu.Unlock()
+
 	path := strings.Trim(r.URL.Path, "/")
 	parts := strings.Split(path, "/")
 	if len(parts) != 2 || parts[0] != "users" {

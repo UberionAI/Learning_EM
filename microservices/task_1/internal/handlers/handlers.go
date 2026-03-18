@@ -67,8 +67,8 @@ func updateOrDeleteUser(w http.ResponseWriter, r *http.Request) {
 	}
 	id := parts[1]
 
-	if _, exists := users[id]; !exists && r.Method == http.MethodPut {
-		http.Error(w, "user is not found", http.StatusNotFound)
+	if _, exists := users[id]; !exists {
+		http.Error(w, "user not found", http.StatusNotFound)
 		return
 	}
 
